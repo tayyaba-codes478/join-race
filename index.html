@@ -4,32 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="theme-color" content="#090b10">
-    <meta name="description" content="Explore a premium collection of performance and classic cars.">
+    <meta name="description" content="Explore the JOIN RACE automotive collection featuring supercars, classic cars and hypercars.">
 
     <title>JOIN RACE | Automotive Experience</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 
 <body>
-
 <div class="card-container">
-
     <div class="ambient-glow"></div>
 
-    <!-- Navbar -->
     <header class="navbar">
-        <a href="#" class="brand">
+        <a href="#" class="brand" aria-label="JOIN RACE home">
             <span class="brand-icon"><i class="fas fa-gauge-high"></i></span>
             JOIN<span>RACE</span>
         </a>
@@ -39,288 +32,154 @@
             <span>AUTOMOTIVE COLLECTION</span>
         </div>
 
-        <button class="menu-icon" id="menuBtn"
-                aria-label="Toggle menu"
-                aria-expanded="false">
+        <button class="menu-icon" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
             <i class="fas fa-bars"></i>
         </button>
 
-        <nav class="menu-panel" id="menuPanel">
+        <nav class="menu-panel" id="menuPanel" aria-label="Car collection menu">
             <a href="#" data-slide="0">01 — Supercar</a>
             <a href="#" data-slide="1">02 — Classic</a>
             <a href="#" data-slide="2">03 — Hypercar</a>
         </nav>
     </header>
 
-    <!-- Social Links -->
     <aside class="social-sidebar" aria-label="Social links">
         <span class="social-label">FOLLOW THE DRIVE</span>
-
-        <a href="https://www.instagram.com/"
-           target="_blank" rel="noopener noreferrer"
-           aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
-        </a>
-
-        <a href="https://www.facebook.com/"
-           target="_blank" rel="noopener noreferrer"
-           aria-label="Facebook">
-            <i class="fab fa-facebook-f"></i>
-        </a>
-
-        <a href="https://www.x.com/"
-           target="_blank" rel="noopener noreferrer"
-           aria-label="X">
-            <i class="fab fa-x-twitter"></i>
-        </a>
-
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X"><i class="fab fa-x-twitter"></i></a>
         <span class="social-line"></span>
     </aside>
 
-    <!-- Slider -->
-    <main class="slider" aria-label="Car collection">
-
+    <main class="slider" aria-label="Car collection slideshow">
         <div class="slider-wrapper">
 
-            <!-- Slide 1 -->
-            <section class="slide active" data-theme="gold">
-
+            <section class="slide active" data-theme="gold" aria-hidden="false">
                 <div class="bg-split gold"></div>
                 <div class="bg-split dark"></div>
-
-                <div class="background-number">01</div>
+                <div class="background-number" aria-hidden="true">01</div>
 
                 <div class="content">
                     <div class="title-group">
-                        <span class="eyebrow">
-                            <span class="eyebrow-dot"></span>
-                            THE ART OF SPEED
-                        </span>
-
+                        <span class="eyebrow"><span class="eyebrow-dot"></span> THE ART OF SPEED</span>
                         <p class="small-title">Feel the</p>
                         <h1 class="big-title">RACE<span>.</span></h1>
-
                         <p class="car-subtitle">LAMBORGHINI</p>
-
-                        <p class="description">
-                            Born to break limits.<br>
-                            Designed to own the road.
-                        </p>
+                        <p class="description">Born to break limits.<br>Designed to own the road.</p>
 
                         <button class="discover-btn" data-discover="0">
-                            <span>EXPLORE CAR</span>
-                            <i class="fas fa-arrow-right"></i>
+                            <span>EXPLORE CAR</span><i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
 
                     <div class="car-wrapper">
                         <div class="car-glow"></div>
-
-                        <img
-                            src="https://pngimg.com/uploads/lamborghini/lamborghini_PNG10709.png"
-                            alt="Yellow Lamborghini supercar"
-                            class="car-img"
-                            fetchpriority="high"
-                        >
-
+                        <img src="https://pngimg.com/uploads/lamborghini/lamborghini_PNG10709.png"
+                             alt="Yellow Lamborghini supercar" class="car-img" fetchpriority="high">
                         <span class="car-index">01 / 03</span>
                     </div>
                 </div>
 
-                <div class="spec-label">
-                    <span>01</span>
-                    <span>PURE PERFORMANCE</span>
-                </div>
+                <div class="spec-label"><span>01</span><span>PURE PERFORMANCE</span></div>
             </section>
 
-            <!-- Slide 2 -->
-            <section class="slide" data-theme="red">
-
+            <section class="slide" data-theme="red" aria-hidden="true">
                 <div class="bg-split red"></div>
                 <div class="bg-split dark"></div>
-
-                <div class="background-number">02</div>
+                <div class="background-number" aria-hidden="true">02</div>
 
                 <div class="content">
                     <div class="title-group">
-                        <span class="eyebrow">
-                            <span class="eyebrow-dot"></span>
-                            TIMELESS LEGEND
-                        </span>
-
+                        <span class="eyebrow"><span class="eyebrow-dot"></span> TIMELESS LEGEND</span>
                         <p class="small-title">Born to be</p>
                         <h2 class="big-title">ICONIC<span>.</span></h2>
-
                         <p class="car-subtitle">CLASSIC COLLECTION</p>
-
-                        <p class="description">
-                            Where heritage meets elegance.<br>
-                            A legend that never fades.
-                        </p>
+                        <p class="description">Where heritage meets elegance.<br>A legend that never fades.</p>
 
                         <button class="discover-btn" data-discover="1">
-                            <span>EXPLORE CAR</span>
-                            <i class="fas fa-arrow-right"></i>
+                            <span>EXPLORE CAR</span><i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
 
                     <div class="car-wrapper">
                         <div class="car-glow"></div>
-
-                        <img
-                            src="https://pngimg.com/uploads/vintage_cars/vintage_cars_PNG100.png"
-                            alt="Vintage classic car"
-                            class="car-img"
-                            loading="lazy"
-                        >
-
+                        <img src="https://pngimg.com/uploads/vintage_cars/vintage_cars_PNG100.png"
+                             alt="Vintage classic car" class="car-img" loading="lazy">
                         <span class="car-index">02 / 03</span>
                     </div>
                 </div>
 
-                <div class="spec-label">
-                    <span>02</span>
-                    <span>TIMELESS CRAFTSMANSHIP</span>
-                </div>
+                <div class="spec-label"><span>02</span><span>TIMELESS CRAFTSMANSHIP</span></div>
             </section>
 
-            <!-- Slide 3 -->
-            <section class="slide" data-theme="blue">
-
+            <section class="slide" data-theme="blue" aria-hidden="true">
                 <div class="bg-split blue"></div>
                 <div class="bg-split dark"></div>
-
-                <div class="background-number">03</div>
+                <div class="background-number" aria-hidden="true">03</div>
 
                 <div class="content">
                     <div class="title-group">
-                        <span class="eyebrow">
-                            <span class="eyebrow-dot"></span>
-                            BEYOND LIMITS
-                        </span>
-
+                        <span class="eyebrow"><span class="eyebrow-dot"></span> BEYOND LIMITS</span>
                         <p class="small-title">Chase the</p>
                         <h2 class="big-title">FUTURE<span>.</span></h2>
-
                         <p class="car-subtitle">BUGATTI PERFORMANCE</p>
-
-                        <p class="description">
-                            Precision in every detail.<br>
-                            Power without compromise.
-                        </p>
+                        <p class="description">Precision in every detail.<br>Power without compromise.</p>
 
                         <button class="discover-btn" data-discover="2">
-                            <span>EXPLORE CAR</span>
-                            <i class="fas fa-arrow-right"></i>
+                            <span>EXPLORE CAR</span><i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
 
                     <div class="car-wrapper">
                         <div class="car-glow"></div>
-
-                        <img
-                            src="https://pngimg.com/uploads/bugatti/bugatti_PNG23.png"
-                            alt="Blue Bugatti hypercar"
-                            class="car-img"
-                            loading="lazy"
-                        >
-
+                        <img src="https://pngimg.com/uploads/bugatti/bugatti_PNG23.png"
+                             alt="Blue Bugatti hypercar" class="car-img" loading="lazy">
                         <span class="car-index">03 / 03</span>
                     </div>
                 </div>
 
-                <div class="spec-label">
-                    <span>03</span>
-                    <span>ENGINEERED FOR EXCELLENCE</span>
-                </div>
+                <div class="spec-label"><span>03</span><span>ENGINEERED FOR EXCELLENCE</span></div>
             </section>
-
         </div>
 
-        <!-- Side navigation -->
         <div class="slide-nav" aria-label="Choose a car">
-
-            <button class="nav-btn active"
-                    data-index="0"
-                    aria-label="Show car 1"
-                    aria-pressed="true">01</button>
-
-            <button class="nav-btn"
-                    data-index="1"
-                    aria-label="Show car 2"
-                    aria-pressed="false">02</button>
-
-            <button class="nav-btn"
-                    data-index="2"
-                    aria-label="Show car 3"
-                    aria-pressed="false">03</button>
-
+            <button class="nav-btn active" data-index="0" aria-label="Show car 1" aria-pressed="true">01</button>
+            <button class="nav-btn" data-index="1" aria-label="Show car 2" aria-pressed="false">02</button>
+            <button class="nav-btn" data-index="2" aria-label="Show car 3" aria-pressed="false">03</button>
         </div>
     </main>
 
-    <!-- Footer controls -->
     <footer class="bottom-bar">
-
         <div class="footer-caption">
-            <span class="live-dot"></span>
-            <span>BUILT FOR THE DRIVE</span>
+            <span class="live-dot"></span><span>BUILT FOR THE DRIVE</span>
         </div>
 
         <div class="slider-controls">
-            <button id="prevBtn" class="arrow-btn"
-                    aria-label="Previous slide">
-                <i class="fas fa-arrow-left"></i>
-            </button>
+            <button id="prevBtn" class="arrow-btn" aria-label="Previous slide"><i class="fas fa-arrow-left"></i></button>
 
-            <div class="progress-track">
+            <div class="progress-track" role="progressbar" aria-label="Time until next slide" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <span id="progressBar"></span>
             </div>
 
-            <button id="nextBtn" class="arrow-btn"
-                    aria-label="Next slide">
-                <i class="fas fa-arrow-right"></i>
-            </button>
+            <button id="nextBtn" class="arrow-btn" aria-label="Next slide"><i class="fas fa-arrow-right"></i></button>
 
-            <button id="autoplayBtn" class="play-btn"
-                    aria-label="Pause automatic slideshow"
-                    title="Pause slideshow">
+            <button id="autoplayBtn" class="play-btn" aria-label="Pause automatic slideshow" title="Pause slideshow">
                 <i class="fas fa-pause"></i>
             </button>
         </div>
 
-        <span class="footer-counter" id="footerCounter">01 / 03</span>
-
+        <span class="footer-counter" id="footerCounter" aria-live="polite">01 / 03</span>
     </footer>
 
-    <!-- Car detail popup -->
-    <div class="detail-overlay" id="detailOverlay"
-         role="dialog" aria-modal="true"
-         aria-labelledby="detailTitle"
-         aria-hidden="true">
-
+    <div class="detail-overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="detailTitle" aria-describedby="detailDescription" aria-hidden="true">
         <div class="detail-card">
-            <button class="detail-close" id="closeDetails"
-                    aria-label="Close details">
-                <i class="fas fa-xmark"></i>
-            </button>
-
+            <button class="detail-close" id="closeDetails" aria-label="Close details"><i class="fas fa-xmark"></i></button>
             <span class="detail-eyebrow">JOIN RACE COLLECTION</span>
-
             <h2 id="detailTitle">Car Collection</h2>
-
-            <p id="detailDescription">
-                Discover the design and performance.
-            </p>
-
-            <button class="detail-done" id="detailDone">
-                BACK TO COLLECTION
-            </button>
+            <p id="detailDescription">Discover the design and performance.</p>
+            <button class="detail-done" id="detailDone">BACK TO COLLECTION</button>
         </div>
-
     </div>
-
 </div>
-
-<script src="script.js"></script>
 </body>
 </html>

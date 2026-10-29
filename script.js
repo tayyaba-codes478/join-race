@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtn = document.getElementById("nextBtn");
     const autoplayBtn = document.getElementById("autoplayBtn");
     const progressBar = document.getElementById("progressBar");
+    const progressTrack = document.querySelector(".progress-track");
     const footerCounter = document.getElementById("footerCounter");
 
     const menuBtn = document.getElementById("menuBtn");
@@ -17,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const detailDescription = document.getElementById("detailDescription");
     const closeDetails = document.getElementById("closeDetails");
     const detailDone = document.getElementById("detailDone");
+
+    const slider = document.querySelector(".slider");
+    const intervalDuration = 2000;
 
     const carDetails = [
         {
@@ -36,34 +40,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     ];
 
+    const themes = {
+        gold: { accent: "#e9bd54", rgb: "233, 189, 84" },
+        red: { accent: "#e36d65", rgb: "227, 109, 101" },
+        blue: { accent: "#68a5ff", rgb: "104, 165, 255" }
+    };
+
     let currentIndex = 0;
     let autoplay = true;
-    let autoplayTimer = null;
-    let progressTimer = null;
+    let timer = null;
+    let progressStartedAt = 0;
+    let remainingTime = intervalDuration;
+    let hovered = false;
+    let popupOpen = false;
 
-    const intervalDuration = 4500;
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    // Apply the active slide's accent colour.
+    if (reducedMotion) {
+        autoplay = false;
+    }
+
     function applyTheme(index) {
-        const activeSlide = slides[index];
-        const theme = activeSlide.dataset.theme;
-
-        const themes = {
-            gold: {
-                accent: "#e9bd54",
-                rgb: "233, 189, 84"
-            },
-            red: {
-                accent: "#e36d65",
-                rgb: "227, 109, 101"
-            },
-            blue: {
-                accent: "#68a5ff",
-                rgb: "104, 165, 255"
-            }
-        };
-
-        const selectedTheme = themes[theme];
+        const themeName = slides[index].dataset.theme;
+        const selectedTheme = themes[themeName] || themes.gold;
 
         document.documentElement.style.setProperty(
             "--accent",
@@ -74,41 +75,95 @@ document.addEventListener("DOMContentLoaded", () => {
             "--accent-rgb",
             selectedTheme.rgb
         );
-
-        // Keep the active navigation button in the same accent colour.
-        navButtons.forEach((button, index) => {
-            button.style.setProperty(
-                "--accent",
-                selectedTheme.accent
-            );
-        });
     }
 
-    // Reset the progress animation.
-    function resetProgress() {
-        progressBar.classList.remove("running", "paused");
+    function updateAutoplayButton() {
+        autoplayBtn.innerHTML = autoplay
+            ? '<i class="fas fa-pause"></i>'
+            : '<i class="fas fa-play"></i>';
 
-        // Restart CSS animation.
-        void progressBar.offsetWidth;
+        autoplayBtn.setAttribute(
+            "aria-label",
+            autoplay ? "Pause automatic slideshow" : "Resume automatic slideshow"
+        );
 
-        if (autoplay) {
-            progressBar.classList.add("running");
-        } else {
-            progressBar.style.width = "100%";
+        autoplayBtn.title = autoplay ? "Pause slideshow" : "Resume slideshow";
+    }
+
+    function updateProgress(value) {
+        const percentage = Math.max(0, Math.min(100, value));
+
+        progressBar.style.width = `${percentage}%`;
+        progressTrack.setAttribute("aria-valuenow", String(Math.round(percentage)));
+    }
+
+    function clearTimer() {
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
         }
     }
 
-    // Clear existing timers.
-    function clearTimers() {
-        clearInterval(autoplayTimer);
-        clearTimeout(progressTimer);
-
-        autoplayTimer = null;
-        progressTimer = null;
+    function stopProgressAnimation() {
+        progressBar.classList.remove("running");
+        progressBar.classList.add("paused");
     }
 
-    // Move to a selected slide.
-    function goToSlide(index, resetAutoplay = true) {
+    function startProgressAnimation() {
+        progressBar.classList.remove("running", "paused");
+        progressBar.style.width = `${100 - (remainingTime / intervalDuration) * 100}%`;
+
+        // Restart the CSS progress animation from the current point.
+        void progressBar.offsetWidth;
+
+        progressBar.style.width = "";
+        progressBar.style.animationDuration = `${remainingTime}ms`;
+        progressBar.style.animationDelay = "0ms";
+        progressBar.classList.add("running");
+        progressStartedAt = performance.now();
+    }
+
+    function scheduleNextSlide() {
+        clearTimer();
+
+        if (!autoplay || hovered || popupOpen || document.hidden) {
+            return;
+        }
+
+        startProgressAnimation();
+
+        timer = setTimeout(() => {
+            remainingTime = intervalDuration;
+            goToSlide(currentIndex + 1);
+        }, remainingTime);
+    }
+
+    function pauseTimer() {
+        if (timer !== null) {
+            clearTimer();
+
+            const elapsed = performance.now() - progressStartedAt;
+            remainingTime = Math.max(0, remainingTime - elapsed);
+        }
+
+        stopProgressAnimation();
+    }
+
+    function resumeTimer() {
+        if (!autoplay || hovered || popupOpen || document.hidden) {
+            return;
+        }
+
+        if (remainingTime <= 0) {
+            remainingTime = intervalDuration;
+            goToSlide(currentIndex + 1);
+            return;
+        }
+
+        scheduleNextSlide();
+    }
+
+    function goToSlide(index) {
         currentIndex = (index + slides.length) % slides.length;
 
         slides.forEach((slide, slideIndex) => {
@@ -126,68 +181,34 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         footerCounter.textContent =
-            `0${currentIndex + 1} / 0${slides.length}`;
+            `${String(currentIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
 
         applyTheme(currentIndex);
 
-        if (resetAutoplay) {
-            startAutoplay();
-        }
+        remainingTime = intervalDuration;
+        updateProgress(0);
+        scheduleNextSlide();
     }
 
-    // Start or restart automatic sliding.
-    function startAutoplay() {
-        clearTimers();
-
-        resetProgress();
-
-        if (!autoplay) {
-            return;
-        }
-
-        progressTimer = setTimeout(() => {
-            progressBar.style.width = "0";
-            progressBar.classList.remove("running");
-        }, intervalDuration);
-
-        autoplayTimer = setInterval(() => {
-            goToSlide(currentIndex + 1);
-        }, intervalDuration);
-    }
-
-    // Pause automatic sliding.
     function pauseAutoplay() {
         autoplay = false;
-        clearTimers();
-
-        progressBar.classList.remove("running");
-        progressBar.classList.add("paused");
-        progressBar.style.width = "100%";
-
-        autoplayBtn.innerHTML = '<i class="fas fa-play"></i>';
-        autoplayBtn.setAttribute("aria-label", "Resume automatic slideshow");
-        autoplayBtn.title = "Resume slideshow";
+        pauseTimer();
+        updateAutoplayButton();
     }
 
-    // Resume automatic sliding.
     function resumeAutoplay() {
         autoplay = true;
-
-        autoplayBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        autoplayBtn.setAttribute("aria-label", "Pause automatic slideshow");
-        autoplayBtn.title = "Pause slideshow";
-
-        startAutoplay();
+        remainingTime = intervalDuration;
+        updateAutoplayButton();
+        scheduleNextSlide();
     }
 
-    // Numbered navigation.
     navButtons.forEach((button) => {
         button.addEventListener("click", () => {
             goToSlide(Number(button.dataset.index));
         });
     });
 
-    // Previous and next controls.
     prevBtn.addEventListener("click", () => {
         goToSlide(currentIndex - 1);
     });
@@ -196,7 +217,6 @@ document.addEventListener("DOMContentLoaded", () => {
         goToSlide(currentIndex + 1);
     });
 
-    // Pause / resume button.
     autoplayBtn.addEventListener("click", () => {
         if (autoplay) {
             pauseAutoplay();
@@ -205,61 +225,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Open the navigation menu.
     menuBtn.addEventListener("click", () => {
         const isOpen = menuPanel.classList.toggle("open");
 
         menuBtn.setAttribute("aria-expanded", String(isOpen));
+        menuBtn.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
 
         menuBtn.innerHTML = isOpen
             ? '<i class="fas fa-xmark"></i>'
             : '<i class="fas fa-bars"></i>';
     });
 
-    // Navigate from the menu.
     menuPanel.querySelectorAll("[data-slide]").forEach((link) => {
         link.addEventListener("click", (event) => {
             event.preventDefault();
 
             goToSlide(Number(link.dataset.slide));
-
             menuPanel.classList.remove("open");
             menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Open menu");
             menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
         });
     });
 
-    // Show the details popup for the selected car.
-    document.querySelectorAll("[data-discover]").forEach((button) => {
-        button.addEventListener("click", () => {
-            const index = Number(button.dataset.discover);
-            const car = carDetails[index];
+    function showDetails(index) {
+        const car = carDetails[index];
+        if (!car) return;
 
-            detailTitle.textContent = car.title;
-            detailDescription.textContent = car.description;
+        detailTitle.textContent = car.title;
+        detailDescription.textContent = car.description;
 
-            detailOverlay.classList.add("open");
-            detailOverlay.setAttribute("aria-hidden", "false");
+        popupOpen = true;
+        detailOverlay.classList.add("open");
+        detailOverlay.setAttribute("aria-hidden", "false");
 
-            closeDetails.focus();
+        pauseTimer();
+        closeDetails.focus();
+    }
 
-            pauseAutoplay();
-        });
-    });
-
-    // Close the details popup.
     function hideDetails() {
+        if (!popupOpen) return;
+
+        popupOpen = false;
         detailOverlay.classList.remove("open");
         detailOverlay.setAttribute("aria-hidden", "true");
 
         if (autoplay) {
-            startAutoplay();
+            remainingTime = intervalDuration;
+            scheduleNextSlide();
         }
 
-        document.querySelector(
+        const activeDiscoverButton = document.querySelector(
             `[data-discover="${currentIndex}"]`
-        ).focus();
+        );
+
+        if (activeDiscoverButton) {
+            activeDiscoverButton.focus();
+        }
     }
+
+    document.querySelectorAll("[data-discover]").forEach((button) => {
+        button.addEventListener("click", () => {
+            showDetails(Number(button.dataset.discover));
+        });
+    });
 
     closeDetails.addEventListener("click", hideDetails);
     detailDone.addEventListener("click", hideDetails);
@@ -270,58 +299,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Escape key closes popup and menu.
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-            if (detailOverlay.classList.contains("open")) {
-                hideDetails();
-            }
+            if (popupOpen) hideDetails();
 
             menuPanel.classList.remove("open");
             menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Open menu");
             menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
         }
 
-        // Keyboard arrow navigation when popup is closed.
-        if (!detailOverlay.classList.contains("open")) {
-            if (event.key === "ArrowRight") {
-                goToSlide(currentIndex + 1);
-            }
+        if (popupOpen) return;
 
-            if (event.key === "ArrowLeft") {
-                goToSlide(currentIndex - 1);
-            }
+        if (event.key === "ArrowRight") {
+            goToSlide(currentIndex + 1);
+        }
+
+        if (event.key === "ArrowLeft") {
+            goToSlide(currentIndex - 1);
         }
     });
 
-    // Pause while the pointer is over the slider.
-    // Do not override a pause that the user selected manually.
-    let pausedByHover = false;
-
-    const slider = document.querySelector(".slider");
-
+    // Pause on hover, preserving the remaining time.
     slider.addEventListener("mouseenter", () => {
-        if (autoplay) {
-            pausedByHover = true;
-            clearTimers();
-            progressBar.classList.add("paused");
-        }
+        hovered = true;
+        pauseTimer();
     });
 
     slider.addEventListener("mouseleave", () => {
-        if (pausedByHover && autoplay) {
-            pausedByHover = false;
-            startAutoplay();
+        hovered = false;
+        resumeTimer();
+    });
+
+    // Pause the slideshow while the browser tab is hidden.
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            pauseTimer();
+        } else {
+            resumeTimer();
         }
     });
 
-    // Respect reduced-motion preference.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        pauseAutoplay();
-    } else {
-        startAutoplay();
+    // Respect reduced-motion preferences.
+    if (reducedMotion) {
+        autoplay = false;
+        updateAutoplayButton();
     }
 
-    // Initial render.
+    updateAutoplayButton();
     goToSlide(0);
 });
